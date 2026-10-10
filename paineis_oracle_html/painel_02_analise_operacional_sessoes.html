@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel 2 - Análise operacional de sessões</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <h1>Painel 2 — Análise operacional de sessões</h1>
+        <p class="subtitle">Visão detalhada para localizar sessões relevantes e problemáticas.</p>
+      </div>
+      <span class="badge bad">Priorizar sessões bloqueadas e bloqueando outras</span>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <h2>Filtros operacionais</h2>
+      </div>
+      <div class="filters">
+        <div class="filter"><label>Usuário Oracle</label><input placeholder="Ex.: MV2000"></div>
+        <div class="filter"><label>Status da sessão</label><select><option>Todos</option><option>Ativa</option><option>Inativa</option></select></div>
+        <div class="filter"><label>Programa</label><input placeholder="Ex.: JDBC Thin Client"></div>
+        <div class="filter"><label>Origem da máquina</label><input placeholder="Ex.: APP01"></div>
+        <div class="filter"><label>Somente bloqueadas</label><select><option>Não</option><option>Sim</option></select></div>
+        <div class="filter"><label>Somente bloqueando outras</label><select><option>Não</option><option>Sim</option></select></div>
+      </div>
+    </div>
+
+    <div class="grid grid-4" style="margin-top:16px">
+      <div class="card">
+        <div class="kpi-title">Sessões ativas agora</div>
+        <div class="kpi-value">42</div>
+        <div class="kpi-note">Boa para medir pressão operacional</div>
+      </div>
+      <div class="card">
+        <div class="kpi-title">Sessões bloqueadas</div>
+        <div class="kpi-value">5</div>
+        <div class="kpi-note">Paradas aguardando outra sessão</div>
+      </div>
+      <div class="card">
+        <div class="kpi-title">Sessões bloqueando outras</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-note">Prioridade máxima de análise</div>
+      </div>
+      <div class="card">
+        <div class="kpi-title">Sessões com JDBC</div>
+        <div class="kpi-value">18</div>
+        <div class="kpi-note">Ajuda a separar app de acesso manual</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="section-title">
+        <h2>Lista detalhada das sessões</h2>
+        <span class="badge">Base: fact_oracle_sessions.csv</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Instância</th>
+              <th>SID</th>
+              <th>Série</th>
+              <th>Usuário</th>
+              <th>Status</th>
+              <th>Evento de espera</th>
+              <th>Classe da espera</th>
+              <th>Máquina</th>
+              <th>Programa</th>
+              <th>Módulo</th>
+              <th>Ação</th>
+              <th>Usuário do sistema</th>
+              <th>SQL em execução</th>
+              <th>Sessão bloqueadora</th>
+              <th>Segundos desde última chamada</th>
+              <th>Horário de logon</th>
+              <th>Ativa?</th>
+              <th>Bloqueada?</th>
+              <th>Bloqueando?</th>
+              <th>É JDBC?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td><td>120</td><td>4551</td><td>MV2000</td><td>ACTIVE</td><td>enq: TX - row lock contention</td><td>Application</td><td>APP01</td><td>JDBC Thin Client</td><td>Faturamento</td><td>Salvar conta</td><td>svc_mv</td><td>8m2x4t...</td><td>212</td><td>187</td><td>16/04/2026 13:55</td><td>Sim</td><td>Sim</td><td>Não</td><td>Sim</td>
+            </tr>
+            <tr>
+              <td>1</td><td>212</td><td>7810</td><td>MV2000</td><td>ACTIVE</td><td>db file sequential read</td><td>User I/O</td><td>APP01</td><td>JDBC Thin Client</td><td>Faturamento</td><td>Processar lote</td><td>svc_mv</td><td>91zx0q...</td><td></td><td>640</td><td>16/04/2026 13:10</td><td>Sim</td><td>Não</td><td>Sim</td><td>Sim</td>
+            </tr>
+            <tr>
+              <td>1</td><td>331</td><td>9902</td><td>ANALISTA</td><td>INACTIVE</td><td>(sem evento)</td><td>Idle</td><td>DESKTOP01</td><td>SQL Developer</td><td>Consulta</td><td>Validar rotina</td><td>joao</td><td></td><td></td><td>12</td><td>16/04/2026 12:40</td><td>Não</td><td>Não</td><td>Não</td><td>Não</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:16px">
+      <div class="card">
+        <div class="section-title"><h2>Leitura natural sugerida</h2></div>
+        <div class="callout">
+          <p>A sessão mais crítica costuma ser a que está bloqueando outras, principalmente quando vem do mesmo programa, módulo ou máquina de origem. Quando várias sessões aparecem bloqueadas pelo mesmo SID, a investigação deve começar por ele.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>Recortes úteis</h2></div>
+        <ul>
+          <li>sessões ativas com muito tempo desde a última chamada</li>
+          <li>sessões bloqueadas com o mesmo usuário ou módulo</li>
+          <li>sessões JDBC concentradas em uma máquina</li>
+          <li>eventos de espera repetidos na mesma coleta</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer-note">Campos exibidos em linguagem natural, mas mantendo os dados técnicos essenciais para investigação operacional.</p>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

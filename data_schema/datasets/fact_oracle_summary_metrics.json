@@ -1,0 +1,50 @@
+{
+  "dataset_display_name": "Metricas resumidas do Oracle",
+  "metric_values": {
+    "session_total_count": {
+      "display_name": "Sessoes totais",
+      "group_name": "Uso do banco",
+      "description": "Total de conexoes de usuario abertas no banco."
+    },
+    "session_active_count": {
+      "display_name": "Sessoes ativas",
+      "group_name": "Uso do banco",
+      "description": "Quantidade de conexoes executando alguma atividade agora."
+    },
+    "session_inactive_count": {
+      "display_name": "Sessoes inativas",
+      "group_name": "Uso do banco",
+      "description": "Quantidade de conexoes abertas sem atividade no momento."
+    },
+    "wait_sqlnet_message_from_client_count": {
+      "display_name": "Esperando resposta do sistema",
+      "group_name": "Tempo de espera",
+      "description": "Conexoes aguardando comando do sistema cliente."
+    },
+    "wait_resmgr_cpu_quantum_count": {
+      "display_name": "Esperando CPU",
+      "group_name": "Recursos",
+      "description": "Conexoes aguardando disponibilidade de CPU."
+    },
+    "lock_count": {
+      "display_name": "Bloqueios",
+      "group_name": "Concorrencia",
+      "description": "Quantidade de bloqueios ativos no banco."
+    },
+    "blocked_session_count": {
+      "display_name": "Sessoes bloqueadas",
+      "group_name": "Concorrencia",
+      "description": "Quantidade de conexoes que estao presas por bloqueio."
+    },
+    "long_running_active_session_count": {
+      "display_name": "Sessoes ativas demoradas",
+      "group_name": "Desempenho",
+      "description": "Conexoes ativas que estao rodando ha muito tempo."
+    },
+    "active_jdbc_session_count": {
+      "display_name": "Conexoes JDBC ativas",
+      "group_name": "Aplicacao",
+      "description": "Conexoes da aplicacao Java ativas no momento."
+    }
+  }
+}

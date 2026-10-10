@@ -1,0 +1,10 @@
+{
+  "probe_display_name": "Resposta do banco",
+  "probe_description": "Confirma se o banco respondeu e informa a data e hora retornada por ele.",
+  "columns": {
+    "DATA_BANCO": {
+      "display_name": "Data e hora do banco",
+      "description": "Data e hora devolvidas diretamente pelo banco Oracle."
+    }
+  }
+}

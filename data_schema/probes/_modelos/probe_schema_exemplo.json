@@ -1,0 +1,19 @@
+{
+  "probe_display_name": "Nome amigavel da probe",
+  "probe_description": "Descricao curta para leigos.",
+  "columns": {
+    "STATUS_PROCESSAMENTO": {
+      "display_name": "Status do processamento",
+      "description": "Situacao atual retornada pela consulta.",
+      "value_map": {
+        "P": "Pendente",
+        "C": "Concluido",
+        "E": "Erro"
+      }
+    },
+    "QTD_REGISTROS": {
+      "display_name": "Quantidade de registros",
+      "description": "Total de registros encontrados."
+    }
+  }
+}

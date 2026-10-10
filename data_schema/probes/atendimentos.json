@@ -1,0 +1,10 @@
+{
+  "probe_display_name": "Atendimentos do dia",
+  "probe_description": "Mostra quantos atendimentos foram registrados hoje para a empresa monitorada.",
+  "columns": {
+    "QT_ATENDIMENTOS": {
+      "display_name": "Quantidade de atendimentos",
+      "description": "Total de atendimentos retornado pela consulta do dia."
+    }
+  }
+}

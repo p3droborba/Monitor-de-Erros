@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painéis Oracle - HTML</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <h1>Painéis Oracle</h1>
+        <p class="subtitle">Estrutura HTML consolidada para visão geral, análise operacional e BI gerencial.</p>
+      </div>
+      <span class="badge ok">Pronto para adaptação</span>
+    </div>
+
+    <div class="navcards">
+      <a class="navcard" href="painel_01_visao_geral_oracle.html">
+        <h2>Painel 1 — Visão geral Oracle</h2>
+        <p>Mostra a saúde da coleta, volume de sessões, sessões ativas, sessões bloqueadas e sinais gerais de risco operacional.</p>
+        <p class="small">Base principal: fact_oracle_summary.csv e fact_collection_runs.csv</p>
+      </a>
+
+      <a class="navcard" href="painel_02_analise_operacional_sessoes.html">
+        <h2>Painel 2 — Análise operacional de sessões</h2>
+        <p>Mostra cada sessão em nível de linha, com foco em atividade, bloqueio, origem, programa, módulo e sinais úteis para investigação.</p>
+        <p class="small">Base principal: fact_oracle_sessions.csv</p>
+      </a>
+
+      <a class="navcard" href="painel_03_bi_gerencial_oracle.html">
+        <h2>Painel 3 — BI gerencial de operação Oracle</h2>
+        <p>Transforma os sinais técnicos em leitura gerencial: estabilidade, tendência, concentração e pontos de atenção.</p>
+        <p class="small">Base principal: resumo + sessões detalhadas</p>
+      </a>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="section-title">
+        <h2>Como usar</h2>
+      </div>
+      <p>Este pacote entrega a parte HTML da solução. Ele já organiza os painéis com nomes em linguagem natural e separa a navegação por finalidade. O próximo passo é ligar os componentes aos CSVs gerados pelo coletor ou transformar essa estrutura em Power BI, Streamlit ou aplicação web local.</p>
+      <p class="footer-note">Arquivos incluídos: index.html, 3 páginas HTML de painel, styles.css, app.js e README.html.md</p>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

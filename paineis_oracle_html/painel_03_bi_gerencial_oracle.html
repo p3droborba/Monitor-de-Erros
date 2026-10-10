@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel 3 - BI gerencial de operação Oracle</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <h1>Painel 3 — BI gerencial de operação Oracle</h1>
+        <p class="subtitle">Tradução dos sinais técnicos em leitura gerencial e executiva.</p>
+      </div>
+      <span class="badge ok">Foco em tendência e decisão</span>
+    </div>
+
+    <div class="grid grid-4">
+      <div class="card">
+        <div class="kpi-title">Coletas estáveis no período</div>
+        <div class="kpi-value">92%</div>
+        <div class="kpi-note">Percentual sem falha relevante</div>
+      </div>
+      <div class="card">
+        <div class="kpi-title">Pico de sessões ativas</div>
+        <div class="kpi-value">57</div>
+        <div class="kpi-note">Maior pressão observada</div>
+      </div>
+      <div class="card">
+        <div class="kpi-title">Maior volume de bloqueios</div>
+        <div class="kpi-value">8</div>
+        <div class="kpi-note">Ponto de maior risco operacional</div>
+      </div>
+      <div class="card">
+        <div class="kpi-title">Origem mais recorrente</div>
+        <div class="kpi-value" style="font-size:24px">APP01 / JDBC</div>
+        <div class="kpi-note">Principal concentração de sessões</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:16px">
+      <div class="card">
+        <div class="section-title">
+          <h2>Resumo executivo em linguagem natural</h2>
+        </div>
+        <div class="callout">
+          <p>O ambiente opera com estabilidade na maior parte do período, mas há concentração de sessões em origem JDBC e aumento de bloqueios em horários específicos. O risco operacional cresce quando o volume de sessões ativas sobe junto com sessões bloqueadas e sessões longas.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">
+          <h2>Recomendação de navegação</h2>
+        </div>
+        <div class="callout">
+          <p>Use este painel para perceber tendência. Quando houver desvio, desça para o Painel 1 para ver a coleta afetada e então para o Painel 2 para identificar a sessão responsável.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="section-title">
+        <h2>Leitura por período</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th>Coletas realizadas</th>
+              <th>Coletas estáveis</th>
+              <th>Média de sessões ativas</th>
+              <th>Pico de sessões ativas</th>
+              <th>Média de sessões bloqueadas</th>
+              <th>Pico de bloqueios</th>
+              <th>Leitura gerencial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Hoje</td><td>18</td><td>16</td><td>34</td><td>57</td><td>2</td><td>8</td><td>Atenção em horários de pico</td></tr>
+            <tr><td>Últimos 7 dias</td><td>126</td><td>117</td><td>29</td><td>57</td><td>1</td><td>8</td><td>Ambiente geralmente estável</td></tr>
+            <tr><td>Últimos 30 dias</td><td>540</td><td>503</td><td>27</td><td>61</td><td>1</td><td>9</td><td>Há padrão recorrente de concentração</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid grid-3" style="margin-top:16px">
+      <div class="card">
+        <div class="section-title"><h2>Concentração por usuário</h2></div>
+        <div class="bar-list">
+          <div class="bar-row"><div>MV2000</div><div class="bar"><span style="width:72%"></span></div><div>72%</div></div>
+          <div class="bar-row"><div>INTEGRACAO</div><div class="bar"><span style="width:18%"></span></div><div>18%</div></div>
+          <div class="bar-row"><div>Outros</div><div class="bar"><span style="width:10%"></span></div><div>10%</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>Concentração por máquina</h2></div>
+        <div class="bar-list">
+          <div class="bar-row"><div>APP01</div><div class="bar"><span style="width:64%"></span></div><div>64%</div></div>
+          <div class="bar-row"><div>APP02</div><div class="bar"><span style="width:21%"></span></div><div>21%</div></div>
+          <div class="bar-row"><div>Outros</div><div class="bar"><span style="width:15%"></span></div><div>15%</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>Concentração por programa</h2></div>
+        <div class="bar-list">
+          <div class="bar-row"><div>JDBC Thin Client</div><div class="bar"><span style="width:69%"></span></div><div>69%</div></div>
+          <div class="bar-row"><div>SQL Developer</div><div class="bar"><span style="width:11%"></span></div><div>11%</div></div>
+          <div class="bar-row"><div>Outros</div><div class="bar"><span style="width:20%"></span></div><div>20%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer-note">Este painel é a camada de leitura executiva. O detalhamento operacional fica no painel de sessões.</p>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

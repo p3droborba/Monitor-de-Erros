@@ -1,0 +1,43 @@
+painel;dataset;campo_tecnico;nome_para_painel;uso_principal
+Painel 1 - Visão geral Oracle;fact_oracle_summary.csv;session_total_count;Total de sessões;cartão e tendência
+Painel 1 - Visão geral Oracle;fact_oracle_summary.csv;session_active_count;Sessões ativas;cartão e tendência
+Painel 1 - Visão geral Oracle;fact_oracle_summary.csv;session_inactive_count;Sessões inativas;cartão e tendência
+Painel 1 - Visão geral Oracle;fact_oracle_summary.csv;blocked_session_count;Sessões bloqueadas;alerta e tendência
+Painel 1 - Visão geral Oracle;fact_oracle_summary.csv;long_running_active_session_count;Sessões ativas de longa duração;alerta e tendência
+Painel 1 - Visão geral Oracle;fact_oracle_summary.csv;active_jdbc_session_count;Sessões ativas JDBC;cartão e análise
+Painel 1 - Visão geral Oracle;fact_collection_runs.csv;collection_success_flag;Coleta concluída com sucesso;qualidade da coleta
+Painel 1 - Visão geral Oracle;fact_collection_runs.csv;collection_duration_ms;Tempo da coleta em ms;desempenho da coleta
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;oracle_instance_name;Instância Oracle;filtro e detalhe
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;oracle_host_name;Servidor Oracle;filtro e detalhe
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;oracle_database_name;Banco Oracle;filtro e detalhe
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;inst_id;Id da instância;detalhe técnico
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;sid;Id da sessão;detalhe técnico
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;serial#;Número serial da sessão;detalhe técnico
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;username;Usuário Oracle;filtro e agrupamento
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;status;Situação da sessão;filtro e alerta
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;event;Evento de espera;diagnóstico
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;wait_class;Classe de espera;diagnóstico
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;machine;Máquina de origem;origem da sessão
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;program;Programa de origem;origem da sessão
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;module;Módulo;origem funcional
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;action;Ação;origem funcional
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;osuser;Usuário do sistema operacional;origem da sessão
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;sql_id;Id do SQL;rastreamento
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;blocking_session;Sessão bloqueadora;análise de bloqueio
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;last_call_et;Segundos desde a última chamada;priorização
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;logon_time;Data e hora de logon;tempo de permanência
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;is_active_flag;Sessão ativa;filtro e alerta
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;is_blocked_flag;Sessão bloqueada;filtro e alerta
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;is_blocking_flag;Sessão bloqueando outra;filtro e alerta
+Painel 2 - Análise operacional de sessões;fact_oracle_sessions.csv;is_jdbc_flag;Sessão JDBC;filtro e agrupamento
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_summary.csv;session_total_count;Total de sessões na coleta;cartão executivo e tendência
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_summary.csv;session_active_count;Total de sessões ativas;cartão executivo e tendência
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_summary.csv;blocked_session_count;Total de sessões bloqueadas;alerta executivo
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_summary.csv;long_running_active_session_count;Total de sessões ativas de longa duração;alerta executivo
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_summary.csv;active_jdbc_session_count;Total de sessões JDBC ativas;análise executiva
+Painel 3 - BI gerencial de operação Oracle;fact_collection_runs.csv;collection_success_flag;Coleta concluída com sucesso;qualidade do dado
+Painel 3 - BI gerencial de operação Oracle;fact_collection_runs.csv;collection_duration_ms;Tempo total da coleta em ms;desempenho da coleta
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_sessions.csv;is_blocking_flag;Sessão bloqueando outra;alerta e detalhamento
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_sessions.csv;machine;Máquina de origem;concentração operacional
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_sessions.csv;program;Programa de origem;concentração operacional
+Painel 3 - BI gerencial de operação Oracle;fact_oracle_sessions.csv;username;Usuário Oracle;concentração operacional

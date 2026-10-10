@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle Monitor — São Pietro Saúde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07111f;
+  --bg-soft:#0b1628;
+  --surface:#0f1b2d;
+  --surface-2:#132238;
+  --surface-3:#182b46;
+  --surface-4:#1d3557;
+  --border:#223754;
+  --border-soft:rgba(148,163,184,.16);
+  --text-strong:#e7f0fb;
+  --text:#bfd0e6;
+  --text-soft:#8ea5c2;
+  --text-muted:#6d86a5;
+  --primary:#49c2ff;
+  --primary-soft:rgba(73,194,255,.12);
+  --success:#4ade80;
+  --success-soft:rgba(74,222,128,.12);
+  --warning:#f59e0b;
+  --warning-soft:rgba(245,158,11,.12);
+  --danger:#fb7185;
+  --danger-soft:rgba(251,113,133,.12);
+  --shadow:0 18px 46px rgba(2,8,23,.28);
+  --radius-sm:10px;
+  --radius-md:16px;
+  --radius-lg:20px;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+html,body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, rgba(73,194,255,.08), transparent 24%),
+    radial-gradient(circle at top right, rgba(91,185,255,.04), transparent 18%),
+    linear-gradient(180deg,#07111f 0%,#091321 100%);
+  color:var(--text);
+  font-family:var(--sans);
+  overflow-x:hidden;
+}
+body{padding:18px}
+header,.file-bar,.alert-banner,.main,.no-data{
+  width:min(1500px,100%);
+  margin-left:auto;
+  margin-right:auto;
+}
+header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:18px 20px;
+  background:rgba(15,27,45,.82);
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-lg);
+  position:sticky;
+  top:18px;
+  z-index:200;
+  box-shadow:var(--shadow);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:220px;
+  padding-right:8px;
+}
+.brand-hex{
+  width:36px;
+  height:36px;
+  color:var(--primary);
+  filter:drop-shadow(0 8px 18px rgba(73,194,255,.18));
+}
+.brand-text{
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:800;
+  color:var(--text-strong);
+  letter-spacing:.02em;
+}
+.brand-sub{
+  margin-top:2px;
+  font-size:12px;
+  color:var(--text-soft);
+  letter-spacing:.02em;
+}
+.divider-v{
+  width:1px;
+  align-self:stretch;
+  background:var(--border-soft);
+}
+.pill{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:42px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid var(--border-soft);
+  background:rgba(19,34,56,.88);
+  color:var(--text-soft);
+  font-size:12px;
+  line-height:1.2;
+  white-space:nowrap;
+}
+.pill strong{
+  color:var(--text-strong);
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:600;
+}
+.pill .dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:var(--text-muted);
+  flex-shrink:0;
+}
+.pill .dot.ok{background:var(--success);box-shadow:0 0 0 4px rgba(74,222,128,.12)}
+.pill .dot.err{background:var(--danger);box-shadow:0 0 0 4px rgba(251,113,133,.12)}
+.spacer{flex:1;min-width:12px}
+.live-badge{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:var(--success-soft);
+  border:1px solid rgba(74,222,128,.18);
+  color:#86efac;
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.04em;
+}
+.live-dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:var(--success);
+  box-shadow:0 0 0 4px rgba(74,222,128,.12);
+  animation:pulse 1.8s ease-in-out infinite;
+}
+.refresh-wrap{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-left:auto;
+  color:var(--text-soft);
+  font-family:var(--mono);
+  font-size:11px;
+}
+#lastRefreshLabel{white-space:nowrap}
+.cring{position:relative;width:38px;height:38px}
+.cring svg{transform:rotate(-90deg)}
+.cring .tr{fill:none;stroke:rgba(148,163,184,.18);stroke-width:3}
+.cring .fi{fill:none;stroke:var(--primary);stroke-width:3;stroke-linecap:round;stroke-dasharray:82;transition:stroke-dashoffset 1s linear}
+.cring-txt{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--text-strong);
+}
+
+.file-bar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:14px;
+  padding:16px 18px;
+  background:rgba(15,27,45,.68);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow);
+}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:44px;
+  padding:0 16px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:rgba(24,43,70,.76);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(73,194,255,.42);
+  box-shadow:0 10px 20px rgba(2,8,23,.18);
+}
+.btn:focus-visible{
+  outline:2px solid rgba(73,194,255,.56);
+  outline-offset:2px;
+}
+.btn.primary{
+  background:linear-gradient(180deg,rgba(73,194,255,.18) 0%,rgba(73,194,255,.1) 100%);
+  border-color:rgba(73,194,255,.34);
+  color:var(--text-strong);
+}
+.btn.active{
+  border-color:rgba(74,222,128,.34);
+  color:#bbf7d0;
+  background:rgba(74,222,128,.1);
+}
+.fpath{
+  flex:1;
+  min-width:260px;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid var(--border-soft);
+  background:rgba(9,19,33,.68);
+  color:var(--text-muted);
+  font-family:var(--mono);
+  font-size:11px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.fpath.ready{
+  color:#b7e8ff;
+  border-color:rgba(73,194,255,.24);
+  background:rgba(73,194,255,.06);
+}
+.file-info{
+  color:var(--text-soft);
+  font-family:var(--mono);
+  font-size:11px;
+  white-space:nowrap;
+}
+
+.alert-banner{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  margin-top:14px;
+  padding:14px 16px;
+  background:rgba(251,113,133,.08);
+  border:1px solid rgba(251,113,133,.18);
+  border-left:4px solid var(--danger);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+.alert-banner.hidden{display:none}
+.alert-icon{
+  flex-shrink:0;
+  font-size:18px;
+  line-height:1;
+}
+.alert-items{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.alert-chip{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 10px;
+  border-radius:999px;
+  font-family:var(--mono);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.03em;
+}
+.alert-chip.crit{
+  background:var(--danger-soft);
+  color:#fecdd3;
+  border:1px solid rgba(251,113,133,.18);
+}
+.alert-chip.warn{
+  background:var(--warning-soft);
+  color:#fde68a;
+  border:1px solid rgba(245,158,11,.2);
+}
+
+.main{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  margin-top:18px;
+}
+.panel-section{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.section-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+}
+.section-eyebrow{
+  font-family:var(--mono);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--primary);
+}
+.section-title{
+  margin-top:4px;
+  font-size:20px;
+  font-weight:700;
+  color:var(--text-strong);
+  line-height:1.2;
+}
+.section-desc{
+  margin-top:6px;
+  font-size:13px;
+  color:var(--text-soft);
+  max-width:860px;
+  line-height:1.45;
+}
+
+.status-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+.sc{
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  min-height:98px;
+  padding:16px;
+  background:rgba(15,27,45,.8);
+  border:1px solid var(--border-soft);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+.sc::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  border-radius:18px 0 0 18px;
+  background:rgba(148,163,184,.2);
+}
+.sc.ok::before{background:var(--success)}
+.sc.warn::before{background:var(--warning)}
+.sc.err::before{background:var(--danger)}
+.si{
+  width:10px;
+  height:10px;
+  margin-top:6px;
+  border-radius:999px;
+  background:var(--text-muted);
+  flex-shrink:0;
+}
+.si.ok{background:var(--success);box-shadow:0 0 0 6px rgba(74,222,128,.12)}
+.si.warn{background:var(--warning);box-shadow:0 0 0 6px rgba(245,158,11,.12)}
+.si.err{background:var(--danger);box-shadow:0 0 0 6px rgba(251,113,133,.12)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.72;transform:scale(.92)}}
+.sc-label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.sc-name{
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  color:var(--text-soft);
+}
+.sc-val{
+  color:var(--text-strong);
+  font-family:var(--mono);
+  font-size:18px;
+  font-weight:600;
+  line-height:1.2;
+}
+.sc-sub{
+  color:var(--text-muted);
+  font-family:var(--mono);
+  font-size:11px;
+  line-height:1.4;
+}
+
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+.kpi{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-height:126px;
+  padding:16px;
+  background:rgba(15,27,45,.82);
+  border:1px solid var(--border-soft);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+.kpi::after{
+  content:'';
+  position:absolute;
+  inset:0 0 auto 0;
+  height:3px;
+  border-radius:18px 18px 0 0;
+  background:rgba(73,194,255,.36);
+}
+.kpi.danger::after{background:var(--danger)}
+.kpi.warning::after{background:var(--warning)}
+.kpi.good::after{background:var(--success)}
+.kpi-name{
+  color:var(--text-soft);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+.kpi-val{
+  color:var(--text-strong);
+  font-family:var(--mono);
+  font-size:30px;
+  font-weight:700;
+  line-height:1;
+}
+.kpi-val.danger{color:#fecdd3}
+.kpi-val.warning{color:#fde68a}
+.kpi-val.good{color:#bbf7d0}
+.kpi-trend{
+  color:var(--text-muted);
+  font-family:var(--mono);
+  font-size:11px;
+  line-height:1.35;
+}
+.kpi-trend.up{color:#fecdd3}
+.kpi-trend.dn{color:#bbf7d0}
+.kpi-trend.stb{color:var(--text-muted)}
+
+.charts-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.cc{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding:18px;
+  background:rgba(15,27,45,.82);
+  border:1px solid var(--border-soft);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+}
+.cc.full{grid-column:1/-1}
+.cc-hdr{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+.cc-title{
+  color:var(--text-strong);
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+.cc-sub{
+  margin-top:4px;
+  color:var(--text-soft);
+  font-size:12px;
+  line-height:1.5;
+}
+.cc-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid var(--border-soft);
+  background:rgba(24,43,70,.7);
+  color:var(--text);
+  font-family:var(--mono);
+  font-size:10px;
+  white-space:nowrap;
+}
+.chart-wrap{
+  position:relative;
+  width:100%;
+  border-radius:16px;
+  background:linear-gradient(180deg,rgba(19,34,56,.5) 0%,rgba(9,19,33,.28) 100%);
+  border:1px solid rgba(148,163,184,.08);
+  padding:8px;
+}
+.chart-wrap.h160{height:240px}
+.chart-wrap.h200,.chart-wrap.h220{height:300px}
+
+.log-card{
+  background:rgba(15,27,45,.82);
+  border:1px solid var(--border-soft);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.log-hdr{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:18px 20px;
+  border-bottom:1px solid rgba(148,163,184,.08);
+  color:var(--text-strong);
+  font-size:14px;
+  font-weight:700;
+}
+.log-hdr-right{
+  margin-left:auto;
+  font-size:12px;
+  color:var(--text-soft);
+  font-weight:500;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+thead th{
+  position:sticky;
+  top:0;
+  z-index:1;
+  padding:12px 16px;
+  text-align:left;
+  background:rgba(19,34,56,.96);
+  color:var(--text-soft);
+  border-bottom:1px solid rgba(148,163,184,.08);
+  font-family:var(--mono);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+tbody tr{
+  border-bottom:1px solid rgba(148,163,184,.06);
+  transition:background .16s ease;
+}
+tbody tr:hover{background:rgba(24,43,70,.42)}
+tbody tr.ferr{background:rgba(251,113,133,.05)}
+tbody td{
+  padding:12px 16px;
+  color:var(--text);
+  font-family:var(--mono);
+  font-size:11px;
+  vertical-align:top;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:24px;
+  padding:0 8px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.04em;
+}
+.badge.ok{
+  background:var(--success-soft);
+  color:#bbf7d0;
+  border:1px solid rgba(74,222,128,.18);
+}
+.badge.fail{
+  background:var(--danger-soft);
+  color:#fecdd3;
+  border:1px solid rgba(251,113,133,.18);
+}
+.num-ok{color:#bbf7d0}
+.num-err{color:#fecdd3}
+.num-warn{color:#fde68a}
+
+.no-data{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  min-height:68vh;
+  margin-top:18px;
+  padding:44px 28px;
+  text-align:center;
+  background:rgba(15,27,45,.72);
+  border:1px dashed rgba(148,163,184,.22);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+}
+.no-data-hex{
+  width:72px;
+  height:72px;
+  display:grid;
+  place-items:center;
+  border-radius:20px;
+  background:rgba(73,194,255,.08);
+  color:var(--primary);
+  font-size:30px;
+}
+.no-data-title{
+  color:var(--text-strong);
+  font-size:28px;
+  font-weight:800;
+  line-height:1.15;
+}
+.no-data-sub{
+  max-width:700px;
+  color:var(--text-soft);
+  font-size:15px;
+  line-height:1.65;
+}
+.no-data-hint{
+  color:var(--text-muted);
+  font-family:var(--mono);
+  font-size:11px;
+  line-height:1.65;
+}
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#07111f}
+::-webkit-scrollbar-thumb{background:#243957;border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:#304b71}
+
+@media (max-width:1200px){
+  .status-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+  body{padding:14px}
+  header{top:14px}
+  .divider-v,.spacer{display:none}
+  .refresh-wrap{margin-left:0;width:100%;justify-content:space-between}
+  .charts-grid{grid-template-columns:1fr}
+  .cc.full{grid-column:auto}
+  .chart-wrap.h160,.chart-wrap.h200,.chart-wrap.h220{height:260px}
+}
+@media (max-width:640px){
+  body{padding:12px}
+  header,.file-bar,.alert-banner,.main,.no-data{width:100%}
+  header,.file-bar,.alert-banner,.cc,.log-card,.sc,.kpi{border-radius:16px}
+  .pill,.btn,.fpath{width:100%}
+  .status-strip,.kpi-grid{grid-template-columns:1fr}
+  .section-title{font-size:18px}
+  .no-data{padding:34px 18px}
+  .no-data-title{font-size:24px}
+  thead th,tbody td{padding:10px 12px}
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <svg class="brand-hex" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2L36.5 11.5V29.5L20 39L3.5 29.5V11.5L20 2Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+      <path d="M20 8L30.5 14V26L20 32L9.5 26V14L20 8Z" stroke="currentColor" stroke-width="1" opacity=".4"/>
+      <circle cx="20" cy="20" r="4" fill="currentColor" opacity=".8"/>
+      <circle cx="20" cy="20" r="2" fill="currentColor"/>
+    </svg>
+    <div>
+      <div class="brand-text">Oracle Monitor</div>
+      <div class="brand-sub">São Pietro Saúde · Monitor operacional</div>
+    </div>
+  </div>
+
+  <div class="divider-v"></div>
+
+  <div class="pill"><div class="dot" id="hdrDot"></div> Instância <strong id="hdrInstance">—</strong> · Host <strong id="hdrHost">—</strong></div>
+  <div class="pill">Coletas <strong id="hdrCollect">—</strong> · Uptime <strong id="hdrUptime">—</strong></div>
+  <div class="pill" id="hdrPeriod">Janela <strong id="hdrPeriodVal">—</strong></div>
+
+  <div class="spacer"></div>
+
+  <div class="live-badge" id="liveBadge" style="display:none"><div class="live-dot"></div>ATUALIZAÇÃO AUTOMÁTICA</div>
+  <div class="refresh-wrap">
+    <span id="lastRefreshLabel">Selecione a pasta dos CSVs para iniciar o monitor</span>
+    <div class="cring" id="cring" style="display:none">
+      <svg width="38" height="38" viewBox="0 0 34 34">
+        <circle class="tr" cx="17" cy="17" r="13"/>
+        <circle class="fi" id="cringFill" cx="17" cy="17" r="13"/>
+      </svg>
+      <div class="cring-txt" id="cringTxt">30</div>
+    </div>
+  </div>
+</header>
+
+<!-- FILE BAR -->
+<div class="file-bar">
+  <button class="btn primary" onclick="selectFolder()">📁 Selecionar pasta dos CSVs</button>
+  <div class="fpath" id="fpathDisplay">Aponte para a pasta onde o coletor gera os arquivos CSV. Ex.: C:\Docker\erro-prd\saida</div>
+  <button class="btn" id="btnRefresh" onclick="forceRefresh()" style="display:none">↻ Atualizar agora</button>
+  <div class="file-info" id="fileInfo"></div>
+</div>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner hidden" id="alertBanner">
+  <span class="alert-icon">⚠</span>
+  <div class="alert-items" id="alertItems"></div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div class="main" id="mainContent" style="display:none">
+
+  <section class="panel-section">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Visão geral</div>
+        <div class="section-title">Estado atual do monitor, da base e do acesso</div>
+        <div class="section-desc">Primeiro bloco para leitura rápida: saúde da coleta, disponibilidade do Oracle, resposta HTTP e KPIs principais da instância.</div>
+      </div>
+    </div>
+
+    <!-- STATUS STRIP -->
+    <div class="status-strip">
+      <div class="sc" id="scCol">
+        <div class="si" id="siCol"></div>
+        <div class="sc-label">
+          <div class="sc-name">Última Coleta</div>
+          <div class="sc-val" id="vCol">—</div>
+          <div class="sc-sub" id="sCol">—</div>
+        </div>
+      </div>
+      <div class="sc" id="scOra">
+        <div class="si" id="siOra"></div>
+        <div class="sc-label">
+          <div class="sc-name">Oracle DB</div>
+          <div class="sc-val" id="vOra">—</div>
+          <div class="sc-sub" id="sOra">CDB1 @ db2324prd</div>
+        </div>
+      </div>
+      <div class="sc" id="scH1">
+        <div class="si" id="siH1"></div>
+        <div class="sc-label">
+          <div class="sc-name">2324prd HTTP</div>
+          <div class="sc-val" id="vH1">—</div>
+          <div class="sc-sub" id="sH1">cloudmv.com.br</div>
+        </div>
+      </div>
+      <div class="sc" id="scH2">
+        <div class="si" id="siH2"></div>
+        <div class="sc-label">
+          <div class="sc-name">Internet (Ref.)</div>
+          <div class="sc-val" id="vH2">—</div>
+          <div class="sc-sub">google.com</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI GRID -->
+    <div class="kpi-grid">
+      <div class="kpi" id="kST"><div class="kpi-name">Sessões Totais</div><div class="kpi-val" id="vST">—</div><div class="kpi-trend" id="tST">—</div></div>
+      <div class="kpi" id="kSA"><div class="kpi-name">Sessões Ativas</div><div class="kpi-val" id="vSA">—</div><div class="kpi-trend" id="tSA">—</div></div>
+      <div class="kpi" id="kSI"><div class="kpi-name">Sessões Inativas</div><div class="kpi-val" id="vSI">—</div><div class="kpi-trend" id="tSI">—</div></div>
+      <div class="kpi" id="kLK"><div class="kpi-name">Bloqueios (Locks)</div><div class="kpi-val" id="vLK">—</div><div class="kpi-trend" id="tLK">—</div></div>
+      <div class="kpi" id="kBS"><div class="kpi-name">Sess. Bloqueadas</div><div class="kpi-val" id="vBS">—</div><div class="kpi-trend" id="tBS">—</div></div>
+      <div class="kpi" id="kLR"><div class="kpi-name">Sess. Demoradas</div><div class="kpi-val" id="vLR">—</div><div class="kpi-trend" id="tLR">—</div></div>
+      <div class="kpi" id="kJD"><div class="kpi-name">JDBC Ativas</div><div class="kpi-val" id="vJD">—</div><div class="kpi-trend" id="tJD">—</div></div>
+      <div class="kpi" id="kAT"><div class="kpi-name">Atendimentos Hoje</div><div class="kpi-val" id="vAT">—</div><div class="kpi-trend" id="tAT">—</div></div>
+    </div>
+  </section>
+
+  <section class="panel-section">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Tendências e diagnóstico</div>
+        <div class="section-title">Evolução temporal para identificar lentidão, concorrência e variação</div>
+        <div class="section-desc">Os gráficos foram mantidos, mas organizados em um fluxo de leitura mais previsível: primeiro acesso HTTP, depois sessões, concorrência, volume e tempo de coleta.</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
+
+      <div class="cc full">
+        <div class="cc-hdr">
+          <div><div class="cc-title">Tempo de resposta HTTP</div><div class="cc-sub">Latência de acesso ao servidor da aplicação versus referência de internet nas últimas 2 horas.</div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div class="cc-badge" id="httpAvg2324">2324prd avg: —</div>
+            <div class="cc-badge" id="httpMaxLabel">Máx: —</div>
+          </div>
+        </div>
+        <div class="chart-wrap h160"><canvas id="cHTTP"></canvas></div>
+      </div>
+
+      <div class="cc">
+        <div class="cc-hdr">
+          <div><div class="cc-title">Sessões Oracle</div><div class="cc-sub">Total, ativas e inativas ao longo do tempo.</div></div>
+          <div class="cc-badge" id="sessMax">Máx: —</div>
+        </div>
+        <div class="chart-wrap h200"><canvas id="cSess"></canvas></div>
+      </div>
+
+      <div class="cc">
+        <div class="cc-hdr">
+          <div><div class="cc-title">Concorrência e locks</div><div class="cc-sub">Bloqueios ativos, sessões presas e sessões demoradas.</div></div>
+          <div class="cc-badge" id="lockEvents">Eventos: —</div>
+        </div>
+        <div class="chart-wrap h200"><canvas id="cLock"></canvas></div>
+      </div>
+
+      <div class="cc">
+        <div class="cc-hdr">
+          <div><div class="cc-title">Atendimentos do dia</div><div class="cc-sub">Registros acumulados na instância monitorada pela probe SQL.</div></div>
+          <div class="cc-badge" id="atendMax">Máx: —</div>
+        </div>
+        <div class="chart-wrap h200"><canvas id="cAtend"></canvas></div>
+      </div>
+
+      <div class="cc">
+        <div class="cc-hdr">
+          <div><div class="cc-title">Duração das coletas</div><div class="cc-sub">Tempo por ciclo de monitoramento. Pontos vermelhos indicam falha.</div></div>
+          <div class="cc-badge" id="durAvg">Avg: —</div>
+        </div>
+        <div class="chart-wrap h200"><canvas id="cDur"></canvas></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="panel-section">
+    <div class="section-head">
+      <div>
+        <div class="section-eyebrow">Histórico operacional</div>
+        <div class="section-title">Log recente para auditoria rápida e investigação</div>
+        <div class="section-desc">Tabela final para leitura detalhada das últimas coletas, com destaque visual menor e mais foco em varredura e comparação.</div>
+      </div>
+    </div>
+
+    <!-- EVENT LOG -->
+    <div class="log-card">
+      <div class="log-hdr">
+        Log de coletas recentes
+        <div class="log-hdr-right">Últimas 30 coletas · linhas destacadas indicam falha</div>
+      </div>
+      <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Horário Local</th>
+            <th>Status Coleta</th>
+            <th>Oracle</th>
+            <th>HTTP OK</th>
+            <th>HTTP Err</th>
+            <th>Probes OK</th>
+            <th>Probes Err</th>
+            <th>Duração (ms)</th>
+            <th>Top Máquina Oracle</th>
+          </tr>
+        </thead>
+        <tbody id="logBody">
+          <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:20px">—</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /main -->
+
+<!-- NO DATA STATE -->
+<div class="no-data" id="noData">
+  <div class="no-data-hex">◈</div>
+  <div class="no-data-title">Monitor Oracle pronto para iniciar</div>
+  <div class="no-data-sub">
+    Clique em <strong style="color:var(--primary)">“Selecionar pasta dos CSVs”</strong> e navegue até a pasta onde o coletor gera os arquivos de saída.<br><br>
+    O painel lerá automaticamente os <strong>4 arquivos esperados</strong> e atualizará a cada <strong>30 segundos</strong>.
+  </div>
+  <div class="no-data-hint">
+    Requer Google Chrome ou Microsoft Edge · File System Access API<br>
+    Arquivos esperados: fact_collection_runs.csv · fact_http_health_checks.csv · fact_oracle_summary.csv · fact_oracle_probe_values.csv
+  </div>
+</div>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// STATE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let dirHandle = null;
+let charts = {};
+let cdownTimer = null;
+let cdownSec = 30;
+const INTERVAL = 30;
+const MAX_PTS = 240; // 2h @ 30s
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// FILE ACCESS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+async function selectFolder() {
+  try {
+    dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+    document.getElementById('fpathDisplay').textContent = '📂  ' + dirHandle.name;
+    document.getElementById('fpathDisplay').classList.add('ready');
+    document.getElementById('btnRefresh').style.display = '';
+    document.getElementById('liveBadge').style.display = '';
+    document.getElementById('cring').style.display = '';
+    document.getElementById('hdrDot').classList.add('ok');
+    startCountdown();
+    await loadData();
+  } catch(e) {
+    if (e.name !== 'AbortError') alert('Erro ao acessar a pasta:\n' + e.message);
+  }
+}
+
+async function readCSV(name) {
+  try {
+    const fh = await dirHandle.getFileHandle(name);
+    const f = await fh.getFile();
+    return await f.text();
+  } catch { return null; }
+}
+
+function parseCSV(raw) {
+  if (!raw) return [];
+  const lines = raw.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim());
+  if (lines.length < 2) return [];
+  const hdrs = lines[0].split(';').map(h=>h.trim());
+  return lines.slice(1).map(line => {
+    const v = line.split(';');
+    const o = {};
+    hdrs.forEach((h,i) => o[h] = (v[i]||'').trim());
+    return o;
+  });
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// LOAD DATA
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+async function loadData() {
+  if (!dirHandle) return;
+  const [rawRuns, rawHTTP, rawOracle, rawProbes] = await Promise.all([
+    readCSV('fact_collection_runs.csv'),
+    readCSV('fact_http_health_checks.csv'),
+    readCSV('fact_oracle_summary.csv'),
+    readCSV('fact_oracle_probe_values.csv'),
+  ]);
+
+  const runs   = parseCSV(rawRuns).sort((a,b) => new Date(a.collected_at_local) - new Date(b.collected_at_local));
+  const http   = parseCSV(rawHTTP).sort((a,b) => new Date(a.collected_at_local) - new Date(b.collected_at_local));
+  const oracle = parseCSV(rawOracle).sort((a,b) => new Date(a.collected_at_local) - new Date(b.collected_at_local));
+  const probes = parseCSV(rawProbes).sort((a,b) => new Date(a.collected_at_local) - new Date(b.collected_at_local));
+
+  if (!runs.length) { showFileError(); return; }
+
+  renderHeader(runs, oracle);
+  renderStatus(runs, http, oracle);
+  renderKPIs(oracle, probes);
+  renderAlerts(runs, oracle, http);
+  renderCharts(runs, http, oracle, probes);
+  renderLog(runs, oracle);
+
+  // file info
+  const loaded = [rawRuns, rawHTTP, rawOracle, rawProbes].filter(Boolean).length;
+  document.getElementById('fileInfo').textContent = loaded + '/4 arquivos carregados · ' + new Date().toLocaleTimeString('pt-BR');
+  document.getElementById('lastRefreshLabel').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+  document.getElementById('noData').style.display = 'none';
+  document.getElementById('mainContent').style.display = '';
+}
+
+function showFileError() {
+  document.getElementById('fileInfo').textContent = '⚠ Arquivos CSV não encontrados nesta pasta';
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// HEADER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderHeader(runs, oracle) {
+  const lastOra = oracle[oracle.length-1];
+  if (lastOra) {
+    document.getElementById('hdrInstance').textContent = lastOra.oracle_instance_name || '—';
+    document.getElementById('hdrHost').textContent = lastOra.oracle_host_name || '—';
+  }
+  const total = runs.length;
+  const ok = runs.filter(r => r.collection_success_flag === '1').length;
+  document.getElementById('hdrCollect').textContent = total;
+  document.getElementById('hdrUptime').textContent = total ? ((ok/total)*100).toFixed(2)+'%' : '—';
+  if (total) {
+    const first = runs[0].collected_at_local.slice(11,16);
+    const last  = runs[total-1].collected_at_local.slice(11,16);
+    document.getElementById('hdrPeriodVal').textContent = first + ' → ' + last;
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// STATUS STRIP
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function setSC(ids, cls, val, sub) {
+  const [scId,siId,vId,sId] = ids;
+  const sc = document.getElementById(scId);
+  document.getElementById(siId).className = 'si ' + cls;
+  document.getElementById(vId).textContent = val;
+  if (sId) document.getElementById(sId).textContent = sub || '';
+  sc.className = 'sc ' + cls;
+}
+
+function renderStatus(runs, http, oracle) {
+  const lr = runs[runs.length-1];
+  const lo = oracle[oracle.length-1];
+
+  // Coleta
+  if (lr) {
+    const ok = lr.collection_success_flag === '1';
+    setSC(['scCol','siCol','vCol','sCol'], ok ? 'ok' : 'err',
+      ok ? lr.collection_health_label || 'Sucesso' : 'FALHA',
+      lr.collected_at_local ? lr.collected_at_local.slice(11,19) : '');
+  }
+
+  // Oracle
+  if (lo) {
+    const ok = lo.is_success === '1';
+    setSC(['scOra','siOra','vOra','sOra'], ok ? 'ok' : 'err',
+      ok ? 'ONLINE' : 'OFFLINE',
+      'CDB1 @ ' + (lo.oracle_host_name || '—'));
+  }
+
+  // HTTP 2324prd
+  const h1all = http.filter(r => (r.http_target_name||'').includes('2324prd'));
+  const h1 = h1all[h1all.length-1];
+  if (h1) {
+    const ms = parseFloat(h1.http_duration_ms)||0;
+    const ok = h1.is_success === '1';
+    const slow = ms > 5000;
+    setSC(['scH1','siH1','vH1','sH1'],
+      !ok ? 'err' : slow ? 'warn' : 'ok',
+      !ok ? 'TIMEOUT' : slow ? `LENTO  ${ms.toFixed(0)}ms` : `${ms.toFixed(0)} ms`,
+      'Status: ' + (h1.http_status_code||'?'));
+  }
+
+  // Google
+  const h2all = http.filter(r => (r.http_target_name||'').includes('google'));
+  const h2 = h2all[h2all.length-1];
+  if (h2) {
+    const ms = parseFloat(h2.http_duration_ms)||0;
+    setSC(['scH2','siH2','vH2',null],
+      h2.is_success === '1' ? 'ok' : 'err',
+      `${ms.toFixed(0)} ms`, '');
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// KPIs
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function setKPI(ids, cur, prev, opts={}) {
+  const [cId,vId,tId] = ids;
+  const card = document.getElementById(cId);
+  const valEl = document.getElementById(vId);
+  const tEl = document.getElementById(tId);
+  const n = parseInt(cur)||0;
+  const np = parseInt(prev);
+  valEl.textContent = cur !== null ? cur : '—';
+  const cls = opts.danger ? 'danger' : opts.warning ? 'warning' : opts.good ? 'good' : '';
+  valEl.className = 'kpi-val' + (cls ? ' '+cls : '');
+  card.className = 'kpi' + (cls ? ' '+cls : '');
+  if (!isNaN(np)) {
+    const d = n - np;
+    if (d > 0) { tEl.textContent = '▲ +'+d; tEl.className = 'kpi-trend '+(opts.lowBetter?'up':'dn'); }
+    else if (d < 0) { tEl.textContent = '▼ '+d; tEl.className = 'kpi-trend '+(opts.lowBetter?'dn':'up'); }
+    else { tEl.textContent = '— estável'; tEl.className = 'kpi-trend stb'; }
+  } else { tEl.textContent = '—'; tEl.className = 'kpi-trend stb'; }
+}
+
+function renderKPIs(oracle, probes) {
+  const last = oracle[oracle.length-1];
+  const prev = oracle.length>1 ? oracle[oracle.length-2] : {};
+  if (!last) return;
+  const g = k => last[k];
+  const p = k => prev[k];
+
+  setKPI(['kST','vST','tST'], g('session_total_count'), p('session_total_count'), {});
+  const sa = parseInt(g('session_active_count'))||0;
+  setKPI(['kSA','vSA','tSA'], g('session_active_count'), p('session_active_count'), {warning: sa>10, lowBetter:false});
+  setKPI(['kSI','vSI','tSI'], g('session_inactive_count'), p('session_inactive_count'), {});
+  const lk = parseInt(g('lock_count'))||0;
+  setKPI(['kLK','vLK','tLK'], g('lock_count'), p('lock_count'), {danger: lk>1, warning: lk===1, lowBetter:true});
+  const bs = parseInt(g('blocked_session_count'))||0;
+  setKPI(['kBS','vBS','tBS'], g('blocked_session_count'), p('blocked_session_count'), {danger: bs>0, lowBetter:true});
+  const lr = parseInt(g('long_running_active_session_count'))||0;
+  setKPI(['kLR','vLR','tLR'], g('long_running_active_session_count'), p('long_running_active_session_count'), {warning: lr>0, lowBetter:true});
+  setKPI(['kJD','vJD','tJD'], g('active_jdbc_session_count'), p('active_jdbc_session_count'), {});
+
+  // Atendimentos
+  const atRows = probes.filter(r => r.oracle_probe_name==='atendimentos');
+  const la = atRows[atRows.length-1];
+  const pa = atRows.length>1 ? atRows[atRows.length-2] : {};
+  if (la) setKPI(['kAT','vAT','tAT'], la.result_column_value, pa.result_column_value, {good:true, lowBetter:false});
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ALERTS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderAlerts(runs, oracle, http) {
+  const crits = [], warns = [];
+  const lr = runs[runs.length-1];
+  const lo = oracle[oracle.length-1];
+
+  if (lr?.collection_success_flag==='0') crits.push('⛔ FALHA NA COLETA');
+  if (lo?.is_success==='0') crits.push('⛔ ORACLE INACESSÍVEL — Conexão perdida');
+  if (parseInt(lo?.blocked_session_count)>0) crits.push(`🔒 ${lo.blocked_session_count} SESSÃO(ÕES) BLOQUEADA(S)`);
+  if (parseInt(lo?.lock_count)>1) crits.push(`🔐 ${lo.lock_count} BLOQUEIOS ATIVOS`);
+  else if (parseInt(lo?.lock_count)===1) warns.push('🔐 1 BLOQUEIO ATIVO');
+  if (parseInt(lo?.long_running_active_session_count)>0) warns.push('⏱ SESSÃO DEMORADA DETECTADA');
+
+  const now = Date.now();
+  const slowHTTP = http.filter(r => (now - new Date(r.collected_at_local)) < 90000 && parseFloat(r.http_duration_ms)>5000);
+  if (slowHTTP.length) warns.push(`🐢 HTTP 2324prd LENTO: ${Math.round(parseFloat(slowHTTP[0].http_duration_ms))}ms`);
+
+  const banner = document.getElementById('alertBanner');
+  const items = document.getElementById('alertItems');
+  if (crits.length || warns.length) {
+    items.innerHTML = [
+      ...crits.map(c => `<div class="alert-chip crit">${c}</div>`),
+      ...warns.map(w => `<div class="alert-chip warn">${w}</div>`)
+    ].join('');
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// CHARTS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const CBASE = {
+  responsive:true, maintainAspectRatio:false, animation:false,
+  plugins:{
+    legend:{
+      position:'bottom',
+      labels:{color:'#4d7a99',font:{family:"'IBM Plex Mono'",size:9},boxWidth:10,padding:12,usePointStyle:true}
+    },
+    tooltip:{
+      backgroundColor:'#0b1626',borderColor:'#162d4a',borderWidth:1,
+      titleColor:'#cce8ff',bodyColor:'#4d7a99',
+      titleFont:{family:"'IBM Plex Mono'",size:10},bodyFont:{family:"'IBM Plex Mono'",size:10},
+      padding:8
+    }
+  },
+  scales:{
+    x:{
+      type:'time',
+      time:{tooltipFormat:'HH:mm:ss',displayFormats:{minute:'HH:mm',hour:'HH:mm'}},
+      grid:{color:'rgba(14,32,56,.6)',drawBorder:false},
+      ticks:{color:'#1e3a55',font:{family:"'IBM Plex Mono'",size:9},maxTicksLimit:9,maxRotation:0}
+    },
+    y:{
+      grid:{color:'rgba(14,32,56,.6)',drawBorder:false},
+      ticks:{color:'#1e3a55',font:{family:"'IBM Plex Mono'",size:9}}
+    }
+  }
+};
+
+function mkChart(id, cfg) {
+  const ctx = document.getElementById(id).getContext('2d');
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(ctx, cfg);
+}
+
+function tail(arr, n) { return arr.slice(-n); }
+
+function renderCharts(runs, http, oracle, probes) {
+  // ── HTTP ──
+  const h1 = tail(http.filter(r => (r.http_target_name||'').includes('2324prd')), MAX_PTS);
+  const h2 = tail(http.filter(r => (r.http_target_name||'').includes('google')), MAX_PTS);
+  const h1pts = h1.map(r => ({x:new Date(r.collected_at_local), y:parseFloat(r.http_duration_ms)||0}));
+  const h2pts = h2.map(r => ({x:new Date(r.collected_at_local), y:parseFloat(r.http_duration_ms)||0}));
+  const h1Colors = h1pts.map(p => p.y > 5000 ? '#ff3355' : p.y > 1000 ? '#ff9500' : '#00c8ff');
+  if (h1pts.length) {
+    const avg = h1pts.reduce((s,p)=>s+p.y,0)/h1pts.length;
+    const max = Math.max(...h1pts.map(p=>p.y));
+    document.getElementById('httpAvg2324').textContent = `2324prd avg: ${avg.toFixed(0)}ms`;
+    document.getElementById('httpMaxLabel').textContent = `Máx: ${max.toFixed(0)}ms`;
+  }
+  mkChart('cHTTP', {type:'line', data:{datasets:[
+    {label:'2324prd.cloudmv.com.br', data:h1pts,
+     borderColor:'#00c8ff', backgroundColor:'rgba(0,200,255,.04)',
+     pointBackgroundColor:h1Colors, pointBorderColor:h1Colors,
+     pointRadius:h1pts.map(p=>p.y>1000?3:1), borderWidth:1.5, fill:true, tension:.15},
+    {label:'google.com (referência)', data:h2pts,
+     borderColor:'#1e3a55', backgroundColor:'transparent',
+     pointRadius:0, borderWidth:1, fill:false, tension:.15, borderDash:[5,5]}
+  ]}, options:{...CBASE, scales:{...CBASE.scales, y:{...CBASE.scales.y,
+    title:{display:true,text:'ms',color:'#1e3a55',font:{family:"'IBM Plex Mono'",size:9}}}}}});
+
+  // ── SESSIONS ──
+  const o = tail(oracle, MAX_PTS);
+  const omax = o.length ? Math.max(...o.map(r=>parseInt(r.session_total_count)||0)) : 0;
+  document.getElementById('sessMax').textContent = `Máx: ${omax}`;
+  mkChart('cSess', {type:'line', data:{datasets:[
+    {label:'Total', data:o.map(r=>({x:new Date(r.collected_at_local),y:parseInt(r.session_total_count)||0})),
+     borderColor:'#00c8ff', backgroundColor:'rgba(0,200,255,.05)', pointRadius:0, borderWidth:1.5, fill:true, tension:.2},
+    {label:'Ativas', data:o.map(r=>({x:new Date(r.collected_at_local),y:parseInt(r.session_active_count)||0})),
+     borderColor:'#00e676', backgroundColor:'transparent', pointRadius:0, borderWidth:1.5, tension:.2},
+    {label:'Inativas', data:o.map(r=>({x:new Date(r.collected_at_local),y:parseInt(r.session_inactive_count)||0})),
+     borderColor:'#1e3a55', backgroundColor:'transparent', pointRadius:0, borderWidth:1, borderDash:[4,4], tension:.2},
+  ]}, options:CBASE});
+
+  // ── LOCKS / CONCORRÊNCIA ──
+  const lkData = tail(oracle, MAX_PTS);
+  const lkEvts = lkData.filter(r=>parseInt(r.lock_count)>0||parseInt(r.blocked_session_count)>0).length;
+  document.getElementById('lockEvents').textContent = `Eventos: ${lkEvts}`;
+  mkChart('cLock', {type:'line', data:{datasets:[
+    {label:'Bloqueios (locks)', data:lkData.map(r=>({x:new Date(r.collected_at_local),y:parseInt(r.lock_count)||0})),
+     borderColor:'#ff3355', backgroundColor:'rgba(255,51,85,.1)',
+     pointRadius:ctx=>ctx.raw?.y>0?5:0, pointBackgroundColor:'#ff3355',
+     borderWidth:1.5, fill:true, stepped:'before'},
+    {label:'Sess. Bloqueadas', data:lkData.map(r=>({x:new Date(r.collected_at_local),y:parseInt(r.blocked_session_count)||0})),
+     borderColor:'#ff9500', backgroundColor:'rgba(255,149,0,.07)',
+     pointRadius:ctx=>ctx.raw?.y>0?5:0, pointBackgroundColor:'#ff9500',
+     borderWidth:1.5, fill:true, stepped:'before'},
+    {label:'Demoradas', data:lkData.map(r=>({x:new Date(r.collected_at_local),y:parseInt(r.long_running_active_session_count)||0})),
+     borderColor:'#ffd700', backgroundColor:'rgba(255,215,0,.05)',
+     pointRadius:0, borderWidth:1, fill:true, stepped:'before'},
+  ]}, options:{...CBASE, scales:{...CBASE.scales, y:{...CBASE.scales.y, min:0, ticks:{...CBASE.scales.y.ticks, stepSize:1}}}}});
+
+  // ── ATENDIMENTOS ──
+  const atRows = tail(probes.filter(r=>r.oracle_probe_name==='atendimentos'), MAX_PTS);
+  const atPts = atRows.map(r=>({x:new Date(r.collected_at_local), y:parseInt(r.result_column_value)||0}));
+  const atMax = atPts.length ? Math.max(...atPts.map(p=>p.y)) : 0;
+  document.getElementById('atendMax').textContent = `Máx: ${atMax}`;
+  mkChart('cAtend', {type:'line', data:{datasets:[
+    {label:'Atendimentos', data:atPts,
+     borderColor:'#00e676', backgroundColor:'rgba(0,230,118,.07)',
+     pointRadius:0, borderWidth:2, fill:true, tension:.3}
+  ]}, options:CBASE});
+
+  // ── DURATION ──
+  const durPts = tail(runs, MAX_PTS).map(r=>({
+    x:new Date(r.collected_at_local),
+    y:parseFloat(r.collection_duration_ms)||0,
+    failed:r.collection_success_flag==='0'
+  }));
+  const durAvg = durPts.length ? (durPts.reduce((s,p)=>s+p.y,0)/durPts.length).toFixed(0) : '—';
+  document.getElementById('durAvg').textContent = `Avg: ${durAvg}ms`;
+  mkChart('cDur', {type:'line', data:{datasets:[
+    {label:'Duração (ms)', data:durPts,
+     borderColor:'#4d7a99', backgroundColor:'rgba(0,200,255,.04)',
+     pointBackgroundColor:durPts.map(p=>p.failed?'#ff3355':'transparent'),
+     pointBorderColor:durPts.map(p=>p.failed?'#ff3355':'transparent'),
+     pointRadius:durPts.map(p=>p.failed?6:0),
+     borderWidth:1, fill:true, tension:.2}
+  ]}, options:{...CBASE, scales:{...CBASE.scales, y:{...CBASE.scales.y,
+    title:{display:true,text:'ms',color:'#1e3a55',font:{family:"'IBM Plex Mono'",size:9}}}}}});
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// EVENT LOG
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderLog(runs, oracle) {
+  const oMap = {};
+  oracle.forEach(r => oMap[r.collection_id] = r);
+  const last30 = runs.slice(-30).reverse();
+  document.getElementById('logBody').innerHTML = last30.map(r => {
+    const ok = r.collection_success_flag === '1';
+    const oOk = r.oracle_summary_success_flag === '1';
+    const hOk = parseInt(r.http_error_count||0) === 0;
+    const ora = oMap[r.collection_id];
+    return `<tr class="${ok?'':'ferr'}">
+      <td>${r.collected_at_local||'—'}</td>
+      <td><span class="badge ${ok?'ok':'fail'}">${ok?'✓ SUCESSO':'✗ FALHA'}</span></td>
+      <td class="${oOk?'num-ok':'num-err'}">${oOk?'✓':'✗'}</td>
+      <td class="num-ok">${r.http_success_count||0}</td>
+      <td class="${hOk?'':'num-err'}">${r.http_error_count||0}</td>
+      <td class="num-ok">${r.oracle_probe_success_count||0}</td>
+      <td class="${parseInt(r.oracle_probe_error_count)>0?'num-err':''}">${r.oracle_probe_error_count||0}</td>
+      <td>${parseFloat(r.collection_duration_ms||0).toFixed(0)}</td>
+      <td style="color:var(--text2);font-size:9px">${ora?.top_machine_name||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// COUNTDOWN
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function startCountdown() {
+  if (cdownTimer) clearInterval(cdownTimer);
+  cdownSec = INTERVAL;
+  tick();
+  cdownTimer = setInterval(() => {
+    cdownSec--;
+    tick();
+    if (cdownSec <= 0) {
+      cdownSec = INTERVAL;
+      loadData().catch(console.error);
+    }
+  }, 1000);
+}
+
+function tick() {
+  document.getElementById('cringTxt').textContent = cdownSec;
+  const c = 82;
+  const offset = c - (cdownSec / INTERVAL) * c;
+  document.getElementById('cringFill').style.strokeDashoffset = offset;
+}
+
+async function forceRefresh() {
+  cdownSec = INTERVAL;
+  tick();
+  await loadData();
+}
+</script>
+</body>
+</html>

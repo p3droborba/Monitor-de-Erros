@@ -1,0 +1,1 @@
+select count(*) qt_atendimentos from dbamv.atendime where dt_atendimento = trunc(sysdate) and cd_multi_Empresa = 10

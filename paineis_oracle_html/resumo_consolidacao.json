@@ -1,0 +1,30 @@
+{
+  "painel_1": {
+    "nome": "Visão geral Oracle",
+    "datasets": [
+      "fact_oracle_summary.csv",
+      "fact_oracle_summary_metrics.csv",
+      "fact_collection_runs.csv"
+    ],
+    "foco": "saúde geral da coleta e da instância"
+  },
+  "painel_2": {
+    "nome": "Análise operacional de sessões",
+    "datasets": [
+      "fact_oracle_sessions.csv",
+      "fact_oracle_probe_results.csv",
+      "fact_oracle_probe_values.csv"
+    ],
+    "foco": "investigação de sessões relevantes ou problemáticas"
+  },
+  "painel_3": {
+    "nome": "BI gerencial de operação Oracle",
+    "datasets": [
+      "fact_oracle_summary.csv",
+      "fact_oracle_summary_metrics.csv",
+      "fact_collection_runs.csv",
+      "fact_oracle_sessions.csv"
+    ],
+    "foco": "visão executiva com detalhamento até a sessão"
+  }
+}
